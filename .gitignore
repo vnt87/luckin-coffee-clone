@@ -26,3 +26,5 @@ kotlin-js-store/
 # Generated files
 *.hprof
 captures/
+.agent
+/.kotlin

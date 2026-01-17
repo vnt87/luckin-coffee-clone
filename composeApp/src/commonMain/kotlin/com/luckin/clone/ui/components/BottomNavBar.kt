@@ -111,6 +111,7 @@ private fun NavBarItem(
         verticalArrangement = Arrangement.Center
     ) {
         Box(
+            modifier = Modifier.size(48.dp),
             contentAlignment = Alignment.Center
         ) {
             // Animated background for home
