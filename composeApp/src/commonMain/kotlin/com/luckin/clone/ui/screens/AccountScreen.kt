@@ -20,11 +20,16 @@ import com.luckin.clone.ui.components.*
 import com.luckin.clone.ui.theme.*
 import kotlinx.coroutines.delay
 
+import com.luckin.clone.data.repository.ProductRepository
+import kotlinx.coroutines.launch
+
 @Composable
 fun AccountScreen(
+    productRepository: ProductRepository,
     onLoginClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val scope = rememberCoroutineScope()
     val scrollState = rememberScrollState()
     var isVisible by remember { mutableStateOf(false) }
     
@@ -104,6 +109,25 @@ fun AccountScreen(
                         }
                         
                         Spacer(modifier = Modifier.height(16.dp))
+
+                        // Temporary Seed Data Button
+                        Button(
+                            onClick = { 
+                                scope.launch {
+                                    productRepository.seedData()
+                                }
+                            },
+                            shape = RoundedCornerShape(20.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = White.copy(alpha = 0.2f)
+                            )
+                        ) {
+                            Text(
+                                text = "Seed Mock Data to Firebase",
+                                style = MaterialTheme.typography.labelMedium,
+                                color = White
+                            )
+                        }
                     }
                 }
             }

@@ -20,14 +20,26 @@ import com.luckin.clone.ui.components.*
 import com.luckin.clone.ui.theme.*
 import kotlinx.coroutines.delay
 
+import com.luckin.clone.data.repository.ProductRepository
+
 @Composable
 fun MenuScreen(
+    productRepository: ProductRepository,
     cartState: CartState = MockData.sampleCart,
     onProductClick: (String) -> Unit = {},
     onCartClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var selectedCategory by remember { mutableStateOf(MockData.categories.first()) }
+    val categories by productRepository.categories.collectAsState(initial = emptyList())
+    val products by productRepository.products.collectAsState(initial = emptyList())
+    
+    var selectedCategory by remember { mutableStateOf<Category?>(null) }
+    
+    LaunchedEffect(categories) {
+        if (selectedCategory == null && categories.isNotEmpty()) {
+            selectedCategory = categories.first()
+        }
+    }
     var showProductPopup by remember { mutableStateOf<Product?>(null) }
     var showToast by remember { mutableStateOf(false) }
     var toastMessage by remember { mutableStateOf("") }
@@ -68,11 +80,13 @@ fun MenuScreen(
                     .weight(1f)
             ) {
                 // Scrollable Category sidebar with LazyColumn
-                ScrollableCategorySidebar(
-                    categories = MockData.categories,
-                    selectedCategoryId = selectedCategory.id,
-                    onCategorySelected = { selectedCategory = it }
-                )
+                if (categories.isNotEmpty()) {
+                    ScrollableCategorySidebar(
+                        categories = categories,
+                        selectedCategoryId = selectedCategory?.id ?: "",
+                        onCategorySelected = { selectedCategory = it }
+                    )
+                }
                 
                 // Category content with transition
                 AnimatedContent(
@@ -83,13 +97,16 @@ fun MenuScreen(
                     },
                     modifier = Modifier.weight(1f)
                 ) { category ->
-                    CategoryContent(
-                        category = category,
-                        onProductClick = { productId ->
-                            val product = MockData.featuredProducts.find { it.id == productId }
-                            product?.let { showProductPopup = it }
-                        }
-                    )
+                    if (category != null) {
+                        CategoryContent(
+                            category = category,
+                            allProducts = products,
+                            onProductClick = { productId ->
+                                val product = products.find { it.id == productId }
+                                product?.let { showProductPopup = it }
+                            }
+                        )
+                    }
                 }
             }
         }
@@ -186,12 +203,13 @@ private fun AnimatedFloatingCartBar(
 @Composable
 private fun CategoryContent(
     category: Category,
+    allProducts: List<Product>,
     onProductClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val products = MockData.featuredProducts.filter { 
+    val products = allProducts.filter { 
         it.category == category.id || category.id in listOf("best_sellers", "today_deals", "new_arrivals", "luckin_day")
-    }.ifEmpty { MockData.featuredProducts }
+    }.ifEmpty { allProducts }
     
     var contentLoaded by remember { mutableStateOf(false) }
     

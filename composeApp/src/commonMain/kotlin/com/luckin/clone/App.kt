@@ -16,18 +16,24 @@ import com.luckin.clone.ui.components.LuckinBottomNavBar
 import com.luckin.clone.ui.screens.*
 import com.luckin.clone.ui.theme.LuckinTheme
 
+import com.luckin.clone.data.repository.ProductRepository
+
 @Composable
-fun App() {
+fun App(productRepository: ProductRepository) {
     LuckinTheme(darkTheme = false) {
         val navController = rememberNavController()
         
-        LuckinApp(navController = navController)
+        LuckinApp(
+            navController = navController,
+            productRepository = productRepository
+        )
     }
 }
 
 @Composable
 fun LuckinApp(
-    navController: NavHostController
+    navController: NavHostController,
+    productRepository: ProductRepository
 ) {
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route ?: Screen.Home.route
@@ -61,6 +67,7 @@ fun LuckinApp(
         ) {
             composable(Screen.Home.route) {
                 HomeScreen(
+                    productRepository = productRepository,
                     onProductClick = { productId ->
                         // Navigate to product detail (future implementation)
                     }
@@ -69,6 +76,7 @@ fun LuckinApp(
             
             composable(Screen.Menu.route) {
                 MenuScreen(
+                    productRepository = productRepository,
                     onProductClick = { productId ->
                         // Navigate to product detail (future implementation)
                     },
@@ -83,7 +91,9 @@ fun LuckinApp(
             }
             
             composable(Screen.Account.route) {
-                AccountScreen()
+                AccountScreen(
+                    productRepository = productRepository
+                )
             }
         }
     }

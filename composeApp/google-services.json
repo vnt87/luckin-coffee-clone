@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "43929034212",
+    "project_id": "luckin-coffee-clone-vnt87",
+    "storage_bucket": "luckin-coffee-clone-vnt87.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:43929034212:android:bc5cf6ad28abd7506f7bf1",
+        "android_client_info": {
+          "package_name": "com.luckin.clone"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDEII5QmQ-Xrn3WqcS1FTJpJ-QX0GWTDyU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

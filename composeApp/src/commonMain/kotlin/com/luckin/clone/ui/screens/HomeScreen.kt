@@ -24,11 +24,17 @@ import com.luckin.clone.ui.components.*
 import com.luckin.clone.ui.theme.*
 import kotlinx.coroutines.delay
 
+import com.luckin.clone.data.repository.ProductRepository
+
 @Composable
 fun HomeScreen(
+    productRepository: ProductRepository,
     onProductClick: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val banners by productRepository.banners.collectAsState(initial = emptyList())
+    val products by productRepository.products.collectAsState(initial = emptyList())
+
     val scrollState = rememberScrollState()
     var isLoading by remember { mutableStateOf(true) }
     var showProductPopup by remember { mutableStateOf<Product?>(null) }
@@ -65,7 +71,7 @@ fun HomeScreen(
                         }
                 ) {
                     HeroBannerCarousel(
-                        banners = MockData.banners,
+                        banners = banners,
                         onBannerClick = { },
                         autoScrollInterval = 5000L
                     )
@@ -192,7 +198,7 @@ fun HomeScreen(
                             contentPadding = PaddingValues(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            itemsIndexed(MockData.featuredProducts) { index, product ->
+                            itemsIndexed(products) { index, product ->
                                 AnimatedProductCard(
                                     product = product,
                                     onClick = { showProductPopup = product },
@@ -214,7 +220,7 @@ fun HomeScreen(
                             contentPadding = PaddingValues(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            itemsIndexed(MockData.featuredProducts.shuffled()) { index, product ->
+                            itemsIndexed(products.shuffled()) { index, product ->
                                 AnimatedProductCard(
                                     product = product,
                                     onClick = { showProductPopup = product },
@@ -236,7 +242,7 @@ fun HomeScreen(
                             contentPadding = PaddingValues(horizontal = 16.dp),
                             horizontalArrangement = Arrangement.spacedBy(12.dp)
                         ) {
-                            itemsIndexed(MockData.featuredProducts.filter { it.isNew }) { index, product ->
+                            itemsIndexed(products.filter { it.isNew }) { index, product ->
                                 AnimatedProductCard(
                                     product = product,
                                     onClick = { showProductPopup = product },
